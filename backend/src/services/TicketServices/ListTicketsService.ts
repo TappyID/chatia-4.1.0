@@ -82,7 +82,7 @@ const ListTicketsService = async ({
 
   whereCondition = {
     [Op.or]: [{ userId }, { status: "pending" }],
-    queueId: showTicketWithoutQueue ? { [Op.or]: [queueIds, null] } : { [Op.or]: [queueIds] },
+    queueId: showTicketWithoutQueue ? { [Op.or]: [{ [Op.in]: queueIds }, null] } : { [Op.in]: queueIds },
     companyId
   };
 
@@ -130,7 +130,7 @@ const ListTicketsService = async ({
     if (status === "group" && user.allowGroup && user.whatsappId) {
       whereCondition = {
         companyId,
-        queueId: { [Op.or]: [queueIds, null] },
+        queueId: { [Op.or]: [{ [Op.in]: queueIds }, null] },
         whatsappId: user.whatsappId
       };
     }
@@ -138,7 +138,7 @@ const ListTicketsService = async ({
       if (status === "group" && (user.allowGroup) && !user.whatsappId) {
         whereCondition = {
           companyId,
-          queueId: { [Op.or]: [queueIds, null] },
+          queueId: { [Op.or]: [{ [Op.in]: queueIds }, null] },
         };
       }
       else
@@ -151,7 +151,7 @@ const ListTicketsService = async ({
             ticketsIds = await Ticket.findAll({
               where: {
                 userId: { [Op.or]: [user.id, null] },
-                queueId: { [Op.or]: [queueIds, null] },
+                queueId: { [Op.or]: [{ [Op.in]: queueIds }, null] },
                 status: "pending",
                 companyId
               },
@@ -232,9 +232,9 @@ const ListTicketsService = async ({
     } else if (user.allHistoric === "enabled" && !showTicketWithoutQueue) {
       whereCondition = { companyId, queueId: { [Op.ne]: null } };
     } else if (user.allHistoric === "disabled" && showTicketWithoutQueue) {
-      whereCondition = { companyId, queueId: { [Op.or]: [queueIds, null] } };
+      whereCondition = { companyId, queueId: { [Op.or]: [{ [Op.in]: queueIds }, null] } };
     } else if (user.allHistoric === "disabled" && !showTicketWithoutQueue) {
-      whereCondition = { companyId, queueId: queueIds };
+      whereCondition = { companyId, queueId: { [Op.in]: queueIds } };
     }
   }
 
@@ -259,13 +259,13 @@ const ListTicketsService = async ({
       if (showAll === "false" && user.profile === "admin") {
         whereCondition2 = {
           ...whereCondition2,
-          queueId: queueIds,
+          queueId: { [Op.in]: queueIds },
           userId
         }
       } else {
         whereCondition2 = {
           ...whereCondition2,
-          queueId: showAll === "true" || showTicketWithoutQueue ? { [Op.or]: [queueIds, null] } : queueIds,
+          queueId: showAll === "true" || showTicketWithoutQueue ? { [Op.or]: [{ [Op.in]: queueIds }, null] } : { [Op.in]: queueIds },
         }
       }
 
@@ -284,13 +284,13 @@ const ListTicketsService = async ({
       if (showAll === "false" && (user.profile === "admin" || user.allUserChat === "enabled")) {
         whereCondition2 = {
           ...whereCondition2,
-          queueId: queueIds,
+          queueId: { [Op.in]: queueIds },
           userId
         }
       } else {
         whereCondition2 = {
           ...whereCondition2,
-          queueId: showAll === "true" || showTicketWithoutQueue ? { [Op.or]: [queueIds, null] } : queueIds,
+          queueId: showAll === "true" || showTicketWithoutQueue ? { [Op.or]: [{ [Op.in]: queueIds }, null] } : { [Op.in]: queueIds },
         }
       }
 
@@ -320,7 +320,7 @@ const ListTicketsService = async ({
           attributes: ['companyId', 'contactId', 'whatsappId', [literal('MAX("id")'), 'id']],
           where: {
             [Op.or]: [{ userId }, { status: ["pending", "closed", "group"] }],
-            queueId: showAll === "true" || showTicketWithoutQueue ? { [Op.or]: [queueIds, null] } : queueIds,
+            queueId: showAll === "true" || showTicketWithoutQueue ? { [Op.or]: [{ [Op.in]: queueIds }, null] } : { [Op.in]: queueIds },
             companyId
           },
           group: ['companyId', 'contactId', 'whatsappId'],
@@ -334,7 +334,7 @@ const ListTicketsService = async ({
         if (showAll === "false" && user.profile === "admin") {
           whereCondition2 = {
             ...whereCondition2,
-            queueId: queueIds,
+            queueId: { [Op.in]: queueIds },
 
             // [Op.or]: [{ userId }, { status: ["pending", "closed", "group"] }],
           }
@@ -342,7 +342,7 @@ const ListTicketsService = async ({
         } else if (showAll === "true" && user.profile === "admin") {
           whereCondition2 = {
             companyId,
-            queueId: { [Op.or]: [queueIds, null] },
+            queueId: { [Op.or]: [{ [Op.in]: queueIds }, null] },
             // status: ["pending", "closed", "group"]
           }
         }
@@ -512,7 +512,7 @@ const ListTicketsService = async ({
             },
             {
               status: showNotificationPendingValue ? { [Op.in]: ["pending", "group"] } : { [Op.in]: ["group"] },
-              queueId: showTicketWithoutQueue ? { [Op.or]: [userQueueIds, null] } : { [Op.or]: [userQueueIds] },
+              queueId: showTicketWithoutQueue ? { [Op.or]: [{ [Op.in]: userQueueIds }, null] } : { [Op.in]: userQueueIds },
               unreadMessages: { [Op.gt]: 0 },
               companyId,
               isGroup: showGroups ? { [Op.or]: [true, false] } : false
@@ -523,7 +523,7 @@ const ListTicketsService = async ({
         if (status === "group" && (user.allowGroup || showAll === "true")) {
           whereCondition = {
             ...whereCondition,
-            queueId: { [Op.or]: [userQueueIds, null] },
+            queueId: { [Op.or]: [{ [Op.in]: userQueueIds }, null] },
           };
         }
       }

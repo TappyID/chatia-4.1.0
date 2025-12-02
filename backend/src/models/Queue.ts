@@ -40,7 +40,6 @@ class Queue extends Model<Queue> {
   name: string;
 
   @AllowNull(false)
-  @Unique
   @Column
   color: string;
 

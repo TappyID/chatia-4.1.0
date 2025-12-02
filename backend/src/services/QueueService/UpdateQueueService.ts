@@ -54,19 +54,6 @@ const UpdateQueueService = async (
         }
         return true;
       })
-      .test(
-        "Check-color-exists",
-        "ERR_QUEUE_COLOR_ALREADY_EXISTS",
-        async value => {
-          if (value) {
-            const queueWithSameColor = await Queue.findOne({
-              where: { color: value, id: { [Op.ne]: queueId }, companyId }
-            });
-            return !queueWithSameColor;
-          }
-          return true;
-        }
-      )
   });
 
   try {

@@ -71,19 +71,6 @@ const CreateQueueService = async (queueData: QueueData): Promise<Queue> => {
         }
         return false;
       })
-      .test(
-        "Check-color-exists",
-        "ERR_QUEUE_COLOR_ALREADY_EXISTS",
-        async value => {
-          if (value) {
-            const queueWithSameColor = await Queue.findOne({
-              where: { color: value, companyId }
-            });
-            return !queueWithSameColor;
-          }
-          return false;
-        }
-      )
   });
 
   try {

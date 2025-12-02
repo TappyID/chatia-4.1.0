@@ -55,7 +55,7 @@ const ListTicketsServiceKanban = async ({
   // A lógica antiga era: { [Op.or]: [{ userId }, { status: "pending" }], ... }
   // Isso forçava a visualização a ser individual.
   let whereCondition: Filterable["where"] = {
-    queueId: { [Op.or]: [queueIds, null] }
+    queueId: { [Op.or]: [{ [Op.in]: queueIds }, null] }
   };
   let includeCondition: Includeable[];
 
@@ -88,7 +88,7 @@ const ListTicketsServiceKanban = async ({
   ];
 
   if (showAll === "true") {
-    whereCondition = { queueId: { [Op.or]: [queueIds, null] } };
+    whereCondition = { queueId: { [Op.or]: [{ [Op.in]: queueIds }, null] } };
   }
 
   whereCondition = {
@@ -167,7 +167,7 @@ const ListTicketsServiceKanban = async ({
 
     whereCondition = {
       [Op.or]: [{ userId }, { status: "pending" }],
-      queueId: { [Op.or]: [userQueueIds, null] },
+      queueId: { [Op.or]: [{ [Op.in]: userQueueIds }, null] },
       unreadMessages: { [Op.gt]: 0 }
     };
   }
