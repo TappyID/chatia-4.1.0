@@ -521,7 +521,8 @@ const QueueModal = ({ open, onClose, queueId, onEdit }) => {
                     open={colorPickerModalOpen}
                     handleClose={() => setColorPickerModalOpen(false)}
                     onChange={(color) => {
-                      setFieldValue("color", `#${color.hex}`);
+                      const colorValue = color?.hex ? `#${color.hex}` : color;
+                      setFieldValue("color", colorValue);
                     }}
                     currentColor={values.color}
                   />
